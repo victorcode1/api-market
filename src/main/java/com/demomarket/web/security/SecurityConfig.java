@@ -2,6 +2,7 @@ package com.demomarket.web.security;
 
 import com.demomarket.domain.service.PlatziUserDetailsService;
 
+import com.demomarket.web.security.filter.JwtFilterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,8 +20,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PlatziUserDetailsService platziUserDetailsService;
 
+    @Autowired
+    private JwtFilterRequest jwtFilterRequest;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(platziUserDetailsService);
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests().antMatchers("/**/authenticate").permitAll()
+                .anyRequest().authenticated().and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtFilterRequest, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
