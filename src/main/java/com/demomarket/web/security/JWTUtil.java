@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-    private static final String KEY = "pl4tz1";
+    private static final String KEY = "pl4tz12";
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new Date())
